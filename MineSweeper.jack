@@ -1,0 +1,253 @@
+class MineSweeper{
+field int xCursPos;
+field int yCursPos;
+field int arrayPos;
+field Array answerKey;
+field Array playSpace; //includes flags and numbers
+field boolean gameActive;
+field int activeBombs;
+
+
+    constructor MineSweeper new(int mineAmount)
+    {
+        var int i;
+        /*var int tile;
+        var int mult;
+        var int inc;
+        var Random rand;*/
+        var String gameField;
+
+        let xCursPos = 0;
+        let yCursPos = 0;
+        do updateArrayPos();
+
+        let gameField = "1212B2BB11B1           1B1   1BB1        1111B2111B1112B1111  1BB2B212221111   111     111   1221      112B1112B11111B3221B1 12212221          1B1               111   1B211112221  112B1111 1B1  1B2221       111   1111221     1B1   111  1B11B1    1221  1221  112BB2             1B11BB1  111111    111 112221     1B1  1B1 111 13B2             1111221  1B1       1B1   1B1      111  111 1B1  111    1111221           111    122211122211 111 11211     111         1B12BB1   111            1BB1  1BB22211B1 1B3B2      111       12212B421  1B1   111      1222111223BB1111 224B2     12B1       1B1 123B1  111   1B1      1122B1 113B31    1B211     B321       111 12B21111     111      1B2B21 1B211    1221111111 2B1            2B3212B1              11211  111 111  1B112B22B1 111            2B21B211      111                1B1  1111B3B223211211  111    1221111     1111B1             111111   11213221BB1B3B3222B1    1B1  11211  1B1111          1111B211   13B2 1B3343223B3BB211 111222  1B2B21 111  1221       1B2222B1   1BB2 12BB3BB1113331 112B11B3322122B111211 1BB1    111112B1111   1221  124B322  1B1  1B21223BBB1  1111B2B1 1221    1B1113331          1112B2B211211  111 1B22321 111 22422         1111B2BB211        1B1111B32B2211     111    12B1 1B4B2         111112222B1111     111   2B22B3B2 111  1221  1B22133BB2        12B1  1122211B1         11111113B2 1B1  1BB1  1111B2B321        1B21  1B2B1 111         1B";
+
+        let gameActive = true;
+        let activeBombs = 145;//mineAmount; current amount hardcoded
+
+        let answerKey = Array.new(1408);
+        let i = 0;
+        while(i < 1408)
+        {
+            let answerKey[i] = gameField.charAt(i);
+            let i = i + 1;
+        }
+        //do zeroArray(answerKey);
+        let playSpace = Array.new(1408);
+        do zeroArray(playSpace);
+
+        /*
+            Issues arose generating the mines, so for now I'm using one premade field
+        */
+        //Place mines
+        /*let i = 0;
+        let mult = 2;
+        let inc = 1;
+        let rand = Random.new(44); //Seed is 44
+        let tile = rand.genRandRange(1408, mult, inc);
+        while(i < mineAmount)
+        {
+            while(answerKey[tile] = 66)
+            {//If a tile is repeated, change LCG to use different multiplier
+                if(mult > 20)
+                {
+                    let mult = 2;
+                    let inc = inc + 1;
+                }
+                else
+                {
+                let mult = mult + 1;
+                }
+                let tile = rand.genRandRange(1408, mult, inc);
+            }
+            let answerKey[tile] = 66;
+            let i = i + 1;
+        }*/
+        //Then calculate all numbers
+        //Maybe one day
+
+        do Output.printString("Arrow keys to move cursor");
+        do Output.println();
+        do Output.printString("'F' to flag tiles");
+        do Output.println();
+        do Output.printString("'Enter' to check cell.");
+        return this;
+    }
+
+    method void update(int input)
+    {
+        var int addr;
+        let addr = playSpace;//playSpace;
+        do receiveInput(input);
+        if(activeBombs = 0)
+        {
+            do Output.moveCursor(22, 0);
+            do Output.printString("GAME OVER, YOU WIN.");
+            let gameActive = false;
+        }
+        if(~gameActive)
+        {
+            return;
+        }
+        do drawScreen(addr);
+        return;
+    }
+
+    method void receiveInput(int input)
+    {
+        if(input = 130)//left
+        {
+            if(xCursPos > 0)
+            {
+                let xCursPos = xCursPos - 1;
+                do updateArrayPos();
+            }
+            return;
+        }
+        if(input = 132)//right
+        {
+            if(xCursPos < 63)
+            {
+                let xCursPos = xCursPos + 1;
+                do updateArrayPos();
+            }
+            return;
+        }
+        if(input = 131)//up
+        {
+            if(yCursPos > 0)
+            {
+                let yCursPos = yCursPos - 1;
+                do updateArrayPos();
+            }
+            return;
+        }
+        if(input = 133)//down
+        {
+            if(yCursPos < 21)
+            {
+                let yCursPos = yCursPos + 1;
+                do updateArrayPos();
+            }
+            return;
+        }
+        if(input = 70)//space, flag
+        {
+            do flag();
+            return;
+        }
+        if(input = 128)//enter, prod
+        {
+            do poke();
+            return;
+        }
+
+        return;
+    }
+
+    method void flag()
+    {
+        if(playSpace[arrayPos] = 45)//'-'
+        {
+            let playSpace[arrayPos] = 70;//Place flag
+            if(answerKey[arrayPos] = 66)//If bomb is flagged
+            {
+                let activeBombs = activeBombs - 1;
+            }
+            return;
+        }
+        if(playSpace[arrayPos] = 70)//'F'
+        {
+            let playSpace[arrayPos] = 45;//Remove flag
+            if(answerKey[arrayPos] = 66)//If bomb is flagged
+            {
+                let activeBombs = activeBombs + 1;
+            }
+        }
+        return;
+    }
+
+    method void poke()
+    {
+        if(playSpace[arrayPos] = 45)//empty space
+        {
+            if(answerKey[arrayPos] = 66)//bomb
+            {
+                do GameOver();
+                return;
+            }
+            else
+            {
+               let playSpace[arrayPos] = answerKey[arrayPos];
+            }
+        }
+        return;
+    }
+
+    method void GameOver()
+    {
+        var int addr;
+        let addr = answerKey;
+        do drawScreen(addr);
+        do Output.moveCursor(22, 0);
+        do Output.printString("GAME OVER.");
+        let gameActive = false;
+        return;
+    }
+
+    method void drawScreen(int arrayAddress) {
+        var int i;
+        var Array a;
+        let a = arrayAddress;
+
+        do Output.moveCursor(0, 0);
+        do Screen.clearScreen();
+
+        let i = 0;
+        while(i < 1408)
+        {
+            if(arrayPos = i)
+            {
+                do Output.printChar(43);
+            }
+            else
+            {
+                do Output.printChar(a[i]);
+            }
+            let i = i + 1;
+        }
+        do Output.moveCursor(22, 63);
+        return;
+    }
+
+    method void updateArrayPos()
+    {
+        let arrayPos = yCursPos * 64 + xCursPos;
+        return;
+    }
+
+    method void zeroArray(int arrayAddress)
+    {
+        var int i;
+        var Array a;
+        let a = arrayAddress;
+        let i = 0;
+        while(i < 1408)
+        {
+            let a[i] = 45;
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method boolean active()
+    {
+        return gameActive;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

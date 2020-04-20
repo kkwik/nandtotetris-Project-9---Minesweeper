@@ -1,0 +1,15 @@
+class MyMath{
+    constructor MyMath new()
+    {
+    return this;
+    }
+
+    function int mod(int dividend, int divisor){
+    return (dividend - (divisor * (dividend / divisor)));
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

@@ -1,0 +1,25 @@
+class Random{
+    field int randomResult;
+
+    constructor Random new(int inputSeed) {
+        let randomResult = inputSeed;
+        return this;
+    }
+
+    method int genRandRange(int max, int multiplier, int incrementer) {
+        //Linear Congruential Generator
+        var int dividend;
+        let dividend = multiplier * randomResult + incrementer;
+        let randomResult = MyMath.mod(dividend, max);
+        return randomResult;
+    }
+
+    method int getResult() {
+        return randomResult;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

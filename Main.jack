@@ -1,0 +1,22 @@
+class Main{
+    function void main(){
+        var MineSweeper game;
+        var char input;
+
+        let game = MineSweeper.new(145);
+
+        while(game.active())
+        {
+            let input = Keyboard.readChar();
+            if(~(input = 0))
+            {
+                do game.update(input);
+            }
+        }
+
+    return;
+    }
+
+
+
+}
